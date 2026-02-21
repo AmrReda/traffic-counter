@@ -4,14 +4,20 @@
 # Maven/Java build output
 target/
 out/
+*.class
+dependency-reduced-pom.xml
 
 # Local Maven repository cache used in this workspace
 .m2/
+java-solution/
 
 # IDE files
 .idea/
 *.iml
 .vscode/
+.settings/
+.classpath
+.project
 
 # Logs
 *.log

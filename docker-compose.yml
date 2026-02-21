@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+      target: dev
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - m2-cache:/root/.m2
+    stdin_open: true
+    tty: true
+    command: bash
+
+volumes:
+  m2-cache:
