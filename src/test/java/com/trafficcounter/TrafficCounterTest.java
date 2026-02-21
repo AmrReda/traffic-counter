@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.trafficcounter.analytics.TrafficAnalytics;
 import com.trafficcounter.domain.Record;
-import com.trafficcounter.io.RecordParser;
+import com.trafficcounter.io.IsoRecordParser;
+import com.trafficcounter.io.RecordsParser;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -33,40 +34,49 @@ class TrafficCounterTest {
     @Test
     void totalCars() {
         List<Record> records = parseSample();
-        assertEquals(260, TrafficAnalytics.totalCars(records));
+        TrafficAnalytics analytics = new TrafficAnalytics();
+        assertEquals(260, analytics.totalCars(records));
     }
 
     @Test
     void dailyTotals() {
         List<Record> records = parseSample();
-        assertEquals("{2021-12-01=179, 2021-12-05=81}", TrafficAnalytics.dailyTotals(records).toString());
+        TrafficAnalytics analytics = new TrafficAnalytics();
+        assertEquals("{2021-12-01=179, 2021-12-05=81}", analytics.dailyTotals(records).toString());
     }
 
     @Test
     void topThreeHalfHours() {
         List<Record> records = parseSample();
+        TrafficAnalytics analytics = new TrafficAnalytics();
         assertEquals(
             List.of("2021-12-01T07:30 46", "2021-12-01T08:00 42", "2021-12-01T07:00 25"),
-            TrafficAnalytics.topHalfHours(records, 3).stream().map(Record::asLine).toList()
+            analytics.topHalfHours(records, 3).stream().map(Record::asLine).toList()
         );
     }
 
     @Test
     void leastTrafficPeriod() {
         List<Record> records = parseSample();
+        TrafficAnalytics analytics = new TrafficAnalytics();
         assertEquals(
             List.of("2021-12-01T15:00 9", "2021-12-01T15:30 11", "2021-12-01T23:30 0"),
-            TrafficAnalytics.leastTrafficPeriod(records, 3).stream().map(Record::asLine).toList()
+            analytics.leastTrafficPeriod(records, 3).stream().map(Record::asLine).toList()
         );
     }
 
     @Test
     void leastTrafficPeriodRequiresEnoughRecords() {
         List<Record> records = parseSample();
-        assertThrows(IllegalArgumentException.class, () -> TrafficAnalytics.leastTrafficPeriod(records.subList(0, 2), 3));
+        TrafficAnalytics analytics = new TrafficAnalytics();
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> analytics.leastTrafficPeriod(records.subList(0, 2), 3)
+        );
     }
 
     private List<Record> parseSample() {
-        return RecordParser.parseLines(SAMPLE_INPUT.lines().toList());
+        RecordsParser parser = new IsoRecordParser();
+        return parser.parseLines(SAMPLE_INPUT.lines().toList());
     }
 }

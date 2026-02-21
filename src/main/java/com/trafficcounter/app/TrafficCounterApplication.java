@@ -1,7 +1,12 @@
 package com.trafficcounter.app;
 
+import com.trafficcounter.analytics.TrafficAnalytics;
 import com.trafficcounter.domain.Record;
-import com.trafficcounter.io.RecordFileReader;
+import com.trafficcounter.io.FileRecordsReader;
+import com.trafficcounter.io.IsoRecordParser;
+import com.trafficcounter.io.RecordsParser;
+import com.trafficcounter.io.RecordsReader;
+import com.trafficcounter.report.ReportFormatter;
 import com.trafficcounter.report.TrafficReportFormatter;
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +18,12 @@ public class TrafficCounterApplication {
             System.exit(1);
         }
 
-        List<Record> records = RecordFileReader.read(args[0]);
-        System.out.println(TrafficReportFormatter.format(records));
+        RecordsParser parser = new IsoRecordParser();
+        RecordsReader reader = new FileRecordsReader(parser);
+        TrafficAnalytics analytics = new TrafficAnalytics();
+        ReportFormatter formatter = new TrafficReportFormatter(analytics, analytics, analytics, analytics);
+
+        List<Record> records = reader.read(args[0]);
+        System.out.println(formatter.format(records));
     }
 }

@@ -5,10 +5,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class RecordParser {
-    private RecordParser() {}
-
-    public static List<Record> parseLines(List<String> lines) {
+public class IsoRecordParser implements RecordsParser {
+    @Override
+    public List<Record> parseLines(List<String> lines) {
         List<Record> records = new ArrayList<>();
         for (String rawLine : lines) {
             String line = rawLine.trim();

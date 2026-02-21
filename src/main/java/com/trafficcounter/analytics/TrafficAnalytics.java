@@ -8,10 +8,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class TrafficAnalytics {
-    private TrafficAnalytics() {}
-
-    public static int totalCars(List<Record> records) {
+public class TrafficAnalytics implements
+    TotalCarsCalculator,
+    DailyTotalsCalculator,
+    TopHalfHoursProvider,
+    LeastTrafficPeriodProvider {
+    @Override
+    public int totalCars(List<Record> records) {
         int total = 0;
         for (Record record : records) {
             total += record.count();
@@ -19,7 +22,8 @@ public final class TrafficAnalytics {
         return total;
     }
 
-    public static Map<LocalDate, Integer> dailyTotals(List<Record> records) {
+    @Override
+    public Map<LocalDate, Integer> dailyTotals(List<Record> records) {
         Map<LocalDate, Integer> totals = new LinkedHashMap<>();
         for (Record record : records) {
             LocalDate date = record.date();
@@ -28,13 +32,15 @@ public final class TrafficAnalytics {
         return totals;
     }
 
-    public static List<Record> topHalfHours(List<Record> records, int topN) {
+    @Override
+    public List<Record> topHalfHours(List<Record> records, int topN) {
         List<Record> sorted = new ArrayList<>(records);
         sorted.sort(Comparator.comparingInt(Record::count).reversed().thenComparing(Record::timestamp));
         return sorted.subList(0, Math.min(topN, sorted.size()));
     }
 
-    public static List<Record> leastTrafficPeriod(List<Record> records, int windowSize) {
+    @Override
+    public List<Record> leastTrafficPeriod(List<Record> records, int windowSize) {
         if (records.size() < windowSize) {
             throw new IllegalArgumentException("Need at least " + windowSize + " records.");
         }
@@ -53,7 +59,7 @@ public final class TrafficAnalytics {
         return new ArrayList<>(records.subList(bestStart, bestStart + windowSize));
     }
 
-    private static int windowSum(List<Record> records, int start, int windowSize) {
+    private int windowSum(List<Record> records, int start, int windowSize) {
         int sum = 0;
         for (int i = start; i < start + windowSize; i++) {
             sum += records.get(i).count();
