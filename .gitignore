@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Maven/Java build output
+target/
+out/
+
+# Local Maven repository cache used in this workspace
+.m2/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# Logs
+*.log
