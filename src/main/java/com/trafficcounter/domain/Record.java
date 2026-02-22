@@ -8,6 +8,7 @@ public record Record(LocalDateTime timestamp, int count) {
         return timestamp.toLocalDate();
     }
 
+    // Keeps output aligned with the input line format: "<ISO timestamp> <count>".
     public String asLine() {
         return timestamp + " " + count;
     }
