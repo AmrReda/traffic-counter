@@ -1,39 +1,102 @@
 # Traffic Counter (Java)
 
-## Requirements
+## Purpose
 
-- JDK 21+
+CLI application that reads half-hour traffic counts from a file and outputs:
+- total cars
+- daily totals
+- top 3 half-hours by traffic
+- the least-traffic 1.5-hour period (3 contiguous records)
+
+## Stack
+
+- Java 21
 - Maven 3.9+
-- Docker (optional, for containerized local dev)
+- Spring IoC (`spring-context`) for dependency wiring
 
-## Run tests
+## Quick Start
+
+Run tests:
 
 ```bash
 mvn test
 ```
 
-## Run app
+Run the app with sample input:
 
 ```bash
 mvn -q exec:java -Dexec.args="data/sample_input.txt"
 ```
 
-## Docker local dev
+## Input Contract
 
-Build and open a shell in the dev container:
+Each non-empty input line must follow:
+
+```text
+YYYY-MM-DDTHH:MM:SS <count>
+```
+
+Example:
+
+```text
+2021-12-01T05:00:00 5
+2021-12-01T05:30:00 12
+```
+
+Notes:
+- Blank lines are ignored.
+- Timestamp must be ISO-8601 local date-time.
+- Count must be an integer.
+
+## Output Contract
+
+The app prints:
+1. `Total cars: <number>`
+2. Daily totals as `<yyyy-mm-dd> <number>`
+3. Top 3 half-hours as `<timestamp> <count>`
+4. Least traffic 1.5-hour period (3 contiguous records) plus period total
+
+## Assumptions and Rules
+
+- Input is processed in file order.
+- "Contiguous records" means adjacent lines in file order.
+- Top-3 tie-breaker: earlier timestamp wins when counts are equal.
+- Least-period tie-breaker: first minimum window encountered is returned.
+
+## Error Handling
+
+- `FileTrafficRecordsReader`:
+  - rejects null/blank path (`IllegalArgumentException`)
+  - wraps read failures with path context (`IOException`)
+- `IsoTrafficRecordParser`:
+  - rejects null lines list (`NullPointerException`)
+  - rejects malformed rows or invalid values with line-number context (`IllegalArgumentException`)
+
+## Project Structure
+
+```text
+src/main/java/com/trafficcounter/
+  app/
+  analytics/
+  domain/
+  io/
+  report/
+
+src/test/java/com/trafficcounter/
+  TrafficAnalyticsTest.java
+  FileTrafficRecordsReaderTest.java
+  IsoTrafficRecordParserTest.java
+```
+
+## Docker Local Dev (Optional)
+
+Open a shell:
 
 ```bash
 docker compose run --rm app
 ```
 
-From inside the container:
-
-```bash
-mvn test
-mvn -q exec:java -Dexec.args="data/sample_input.txt"
-```
-
-Run a single command without entering a shell:
+Run commands directly:
 
 ```bash
 docker compose run --rm app mvn test
