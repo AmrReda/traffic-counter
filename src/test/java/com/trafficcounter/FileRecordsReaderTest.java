@@ -1,6 +1,8 @@
 package com.trafficcounter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.trafficcounter.domain.TrafficRecord;
 import com.trafficcounter.io.FileRecordsReader;
@@ -37,5 +39,26 @@ class FileRecordsReaderTest {
         assertEquals("2021-12-01T05:00 5", records.get(0).asLine());
         assertEquals("2021-12-01T05:30 12", records.get(1).asLine());
         assertEquals("2021-12-01T06:00 14", records.get(2).asLine());
+    }
+
+    @Test
+    void constructorRejectsNullParser() {
+        assertThrows(NullPointerException.class, () -> new FileRecordsReader(null));
+    }
+
+    @Test
+    void readRejectsNullPath() {
+        assertThrows(IllegalArgumentException.class, () -> reader.read(null));
+    }
+
+    @Test
+    void readRejectsBlankPath() {
+        assertThrows(IllegalArgumentException.class, () -> reader.read("   "));
+    }
+
+    @Test
+    void readWrapsIoExceptionsWithPathContext() {
+        IOException ex = assertThrows(IOException.class, () -> reader.read("missing-file.txt"));
+        assertTrue(ex.getMessage().contains("missing-file.txt"));
     }
 }
