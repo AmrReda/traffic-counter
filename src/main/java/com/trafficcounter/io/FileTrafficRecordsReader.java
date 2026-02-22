@@ -6,11 +6,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.stereotype.Component;
 
-public class FileRecordsReader implements RecordsReader {
-    private final RecordsParser parser;
+@Component
+public class FileTrafficRecordsReader implements TrafficRecordsReader {
+    private final TrafficRecordsParser parser;
 
-    public FileRecordsReader(RecordsParser parser) {
+    public FileTrafficRecordsReader(TrafficRecordsParser parser) {
         this.parser = Objects.requireNonNull(parser, "parser must not be null");
     }
 

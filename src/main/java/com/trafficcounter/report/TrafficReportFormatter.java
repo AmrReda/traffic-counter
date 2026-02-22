@@ -8,7 +8,9 @@ import com.trafficcounter.domain.TrafficRecord;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TrafficReportFormatter implements ReportFormatter {
     private final TotalCarsCalculator totalCarsCalculator;
     private final DailyTotalsCalculator dailyTotalsCalculator;

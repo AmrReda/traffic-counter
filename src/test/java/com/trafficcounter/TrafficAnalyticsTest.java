@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.trafficcounter.analytics.TrafficAnalytics;
 import com.trafficcounter.domain.TrafficRecord;
-import com.trafficcounter.io.IsoRecordParser;
-import com.trafficcounter.io.RecordsParser;
+import com.trafficcounter.io.IsoTrafficRecordParser;
+import com.trafficcounter.io.TrafficRecordsParser;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ class TrafficAnalyticsTest {
         2021-12-05T15:30:00 15
         """;
 
-    private static final RecordsParser PARSER = new IsoRecordParser();
+    private static final TrafficRecordsParser PARSER = new IsoTrafficRecordParser();
     private static final List<TrafficRecord> SAMPLE_RECORDS = PARSER.parseLines(SAMPLE_INPUT.lines().toList());
     private static final List<String> EXPECTED_TOP_THREE = List.of(
         "2021-12-01T07:30 46",

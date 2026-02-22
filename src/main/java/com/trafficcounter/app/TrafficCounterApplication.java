@@ -1,16 +1,12 @@
 package com.trafficcounter.app;
 
-import com.trafficcounter.analytics.TrafficAnalytics;
-import com.trafficcounter.domain.TrafficRecord;
-import com.trafficcounter.io.FileRecordsReader;
-import com.trafficcounter.io.IsoRecordParser;
-import com.trafficcounter.io.RecordsParser;
-import com.trafficcounter.io.RecordsReader;
-import com.trafficcounter.report.ReportFormatter;
-import com.trafficcounter.report.TrafficReportFormatter;
 import java.io.IOException;
-import java.util.List;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
+@ComponentScan(basePackages = "com.trafficcounter")
 public class TrafficCounterApplication {
     public static void main(String[] args) throws IOException {
         if (args.length != 1) {
@@ -18,12 +14,11 @@ public class TrafficCounterApplication {
             System.exit(1);
         }
 
-        RecordsParser parser = new IsoRecordParser();
-        RecordsReader reader = new FileRecordsReader(parser);
-        TrafficAnalytics analytics = new TrafficAnalytics();
-        ReportFormatter formatter = new TrafficReportFormatter(analytics, analytics, analytics, analytics);
-
-        List<TrafficRecord> records = reader.read(args[0]);
-        System.out.println(formatter.format(records));
+        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
+            TrafficCounterApplication.class
+        )) {
+            TrafficCounterRunner runner = context.getBean(TrafficCounterRunner.class);
+            System.out.println(runner.run(args[0]));
+        }
     }
 }

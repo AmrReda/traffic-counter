@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.trafficcounter.domain.TrafficRecord;
-import com.trafficcounter.io.IsoRecordParser;
+import com.trafficcounter.io.IsoTrafficRecordParser;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class IsoRecordParserTest {
-    private final IsoRecordParser parser = new IsoRecordParser();
+class IsoTrafficRecordParserTest {
+    private final IsoTrafficRecordParser parser = new IsoTrafficRecordParser();
 
     @Test
     void parseRejectsNullLines() {

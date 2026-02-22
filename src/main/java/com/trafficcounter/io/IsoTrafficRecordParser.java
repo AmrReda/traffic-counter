@@ -6,8 +6,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.stereotype.Component;
 
-public class IsoRecordParser implements RecordsParser {
+@Component
+public class IsoTrafficRecordParser implements TrafficRecordsParser {
     @Override
     public List<TrafficRecord> parseLines(List<String> lines) {
         Objects.requireNonNull(lines, "lines must not be null");

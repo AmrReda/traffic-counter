@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.trafficcounter.domain.TrafficRecord;
-import com.trafficcounter.io.FileRecordsReader;
-import com.trafficcounter.io.IsoRecordParser;
-import com.trafficcounter.io.RecordsReader;
+import com.trafficcounter.io.FileTrafficRecordsReader;
+import com.trafficcounter.io.IsoTrafficRecordParser;
+import com.trafficcounter.io.TrafficRecordsReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,7 +15,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-class FileRecordsReaderTest {
+class FileTrafficRecordsReaderTest {
     private static final String FILE_CONTENT = """
         2021-12-01T05:00:00 5
         2021-12-01T05:30:00 12
@@ -23,7 +23,7 @@ class FileRecordsReaderTest {
         2021-12-01T06:00:00 14
         """;
 
-    private final RecordsReader reader = new FileRecordsReader(new IsoRecordParser());
+    private final TrafficRecordsReader reader = new FileTrafficRecordsReader(new IsoTrafficRecordParser());
 
     @TempDir
     Path tempDir;
@@ -43,7 +43,7 @@ class FileRecordsReaderTest {
 
     @Test
     void constructorRejectsNullParser() {
-        assertThrows(NullPointerException.class, () -> new FileRecordsReader(null));
+        assertThrows(NullPointerException.class, () -> new FileTrafficRecordsReader(null));
     }
 
     @Test
