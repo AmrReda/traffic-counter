@@ -14,23 +14,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class FileRecordsReaderTest {
+    private static final String FILE_CONTENT = """
+        2021-12-01T05:00:00 5
+        2021-12-01T05:30:00 12
+
+        2021-12-01T06:00:00 14
+        """;
+
+    private final RecordsReader reader = new FileRecordsReader(new IsoRecordParser());
+
     @TempDir
     Path tempDir;
 
     @Test
     void readsAndParsesRecordsFromFile() throws IOException {
         Path input = tempDir.resolve("traffic.txt");
-        Files.writeString(
-            input,
-            """
-            2021-12-01T05:00:00 5
-            2021-12-01T05:30:00 12
+        Files.writeString(input, FILE_CONTENT);
 
-            2021-12-01T06:00:00 14
-            """
-        );
-
-        RecordsReader reader = new FileRecordsReader(new IsoRecordParser());
         List<Record> records = reader.read(input.toString());
 
         assertEquals(3, records.size());

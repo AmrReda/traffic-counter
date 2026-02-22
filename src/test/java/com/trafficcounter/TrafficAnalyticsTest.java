@@ -31,49 +31,127 @@ class TrafficAnalyticsTest {
         2021-12-05T15:30:00 15
         """;
 
+    private static final RecordsParser PARSER = new IsoRecordParser();
+    private static final List<Record> SAMPLE_RECORDS = PARSER.parseLines(SAMPLE_INPUT.lines().toList());
+    private static final List<String> EXPECTED_TOP_THREE = List.of(
+        "2021-12-01T07:30 46",
+        "2021-12-01T08:00 42",
+        "2021-12-01T07:00 25"
+    );
+    private static final List<String> EXPECTED_LEAST_PERIOD = List.of(
+        "2021-12-01T15:00 9",
+        "2021-12-01T15:30 11",
+        "2021-12-01T23:30 0"
+    );
+
     private final TrafficAnalytics analytics = new TrafficAnalytics();
 
     @Test
+    void handlesEmptyInput() {
+        List<Record> records = parseLines("");
+        assertEquals(0, analytics.totalCars(records));
+        assertEquals("{}", analytics.dailyTotals(records).toString());
+        assertEquals(List.of(), analytics.topHalfHours(records, 3));
+        assertThrows(IllegalArgumentException.class, () -> analytics.leastTrafficPeriod(records, 3));
+    }
+
+    @Test
+    void handlesSingleDayOnly() {
+        List<Record> records = parseLines(
+            """
+            2021-12-01T05:00:00 5
+            2021-12-01T05:30:00 12
+            2021-12-01T06:00:00 14
+            """
+        );
+
+        assertEquals(31, analytics.totalCars(records));
+        assertEquals("{2021-12-01=31}", analytics.dailyTotals(records).toString());
+    }
+
+    @Test
     void totalCars() {
-        List<Record> records = parseSample();
-        assertEquals(260, analytics.totalCars(records));
+        assertEquals(260, analytics.totalCars(SAMPLE_RECORDS));
     }
 
     @Test
     void dailyTotals() {
-        List<Record> records = parseSample();
-        assertEquals("{2021-12-01=179, 2021-12-05=81}", analytics.dailyTotals(records).toString());
+        assertEquals("{2021-12-01=179, 2021-12-05=81}", analytics.dailyTotals(SAMPLE_RECORDS).toString());
     }
 
     @Test
     void topThreeHalfHours() {
-        List<Record> records = parseSample();
+        assertEquals(EXPECTED_TOP_THREE, analytics.topHalfHours(SAMPLE_RECORDS, 3).stream().map(Record::asLine).toList());
+    }
+
+    @Test
+    void topThreeHalfHoursTieBreaksByEarlierTimestamp() {
+        List<Record> records = parseLines(
+            """
+            2021-12-01T01:00:00 10
+            2021-12-01T00:00:00 10
+            2021-12-01T00:30:00 10
+            2021-12-01T02:00:00 9
+            """
+        );
+
         assertEquals(
-            List.of("2021-12-01T07:30 46", "2021-12-01T08:00 42", "2021-12-01T07:00 25"),
+            List.of("2021-12-01T00:00 10", "2021-12-01T00:30 10", "2021-12-01T01:00 10"),
             analytics.topHalfHours(records, 3).stream().map(Record::asLine).toList()
         );
     }
 
     @Test
     void leastTrafficPeriod() {
-        List<Record> records = parseSample();
         assertEquals(
-            List.of("2021-12-01T15:00 9", "2021-12-01T15:30 11", "2021-12-01T23:30 0"),
+            EXPECTED_LEAST_PERIOD,
+            analytics.leastTrafficPeriod(SAMPLE_RECORDS, 3).stream().map(Record::asLine).toList()
+        );
+    }
+
+    @Test
+    void leastTrafficPeriodChoosesFirstWindowOnTie() {
+        List<Record> records = parseLines(
+            """
+            2021-12-01T00:00:00 1
+            2021-12-01T00:30:00 1
+            2021-12-01T01:00:00 1
+            2021-12-01T01:30:00 1
+            """
+        );
+
+        assertEquals(
+            List.of("2021-12-01T00:00 1", "2021-12-01T00:30 1", "2021-12-01T01:00 1"),
+            analytics.leastTrafficPeriod(records, 3).stream().map(Record::asLine).toList()
+        );
+    }
+
+    @Test
+    void leastTrafficUsesLineOrderEvenWhenTimestampsAreNonContiguous() {
+        List<Record> records = parseLines(
+            """
+            2021-12-01T00:00:00 50
+            2021-12-02T23:30:00 1
+            2021-12-10T12:00:00 1
+            2022-01-15T09:00:00 1
+            """
+        );
+
+        assertEquals(
+            List.of("2021-12-02T23:30 1", "2021-12-10T12:00 1", "2022-01-15T09:00 1"),
             analytics.leastTrafficPeriod(records, 3).stream().map(Record::asLine).toList()
         );
     }
 
     @Test
     void leastTrafficPeriodRequiresEnoughRecords() {
-        List<Record> records = parseSample();
         assertThrows(
             IllegalArgumentException.class,
-            () -> analytics.leastTrafficPeriod(records.subList(0, 2), 3)
+            () -> analytics.leastTrafficPeriod(SAMPLE_RECORDS.subList(0, 2), 3)
         );
     }
 
-    private List<Record> parseSample() {
-        RecordsParser parser = new IsoRecordParser();
-        return parser.parseLines(SAMPLE_INPUT.lines().toList());
+    private List<Record> parseLines(String input) {
+        return PARSER.parseLines(input.lines().toList());
     }
 }
