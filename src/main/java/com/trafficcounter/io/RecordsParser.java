@@ -1,8 +1,8 @@
 package com.trafficcounter.io;
 
-import com.trafficcounter.domain.Record;
+import com.trafficcounter.domain.TrafficRecord;
 import java.util.List;
 
 public interface RecordsParser {
-    List<Record> parseLines(List<String> lines);
+    List<TrafficRecord> parseLines(List<String> lines);
 }

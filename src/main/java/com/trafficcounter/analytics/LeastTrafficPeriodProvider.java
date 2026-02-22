@@ -1,8 +1,8 @@
 package com.trafficcounter.analytics;
 
-import com.trafficcounter.domain.Record;
+import com.trafficcounter.domain.TrafficRecord;
 import java.util.List;
 
 public interface LeastTrafficPeriodProvider {
-    List<Record> leastTrafficPeriod(List<Record> records, int windowSize);
+    List<TrafficRecord> leastTrafficPeriod(List<TrafficRecord> records, int windowSize);
 }

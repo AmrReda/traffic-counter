@@ -1,7 +1,7 @@
 package com.trafficcounter.app;
 
 import com.trafficcounter.analytics.TrafficAnalytics;
-import com.trafficcounter.domain.Record;
+import com.trafficcounter.domain.TrafficRecord;
 import com.trafficcounter.io.FileRecordsReader;
 import com.trafficcounter.io.IsoRecordParser;
 import com.trafficcounter.io.RecordsParser;
@@ -23,7 +23,7 @@ public class TrafficCounterApplication {
         TrafficAnalytics analytics = new TrafficAnalytics();
         ReportFormatter formatter = new TrafficReportFormatter(analytics, analytics, analytics, analytics);
 
-        List<Record> records = reader.read(args[0]);
+        List<TrafficRecord> records = reader.read(args[0]);
         System.out.println(formatter.format(records));
     }
 }

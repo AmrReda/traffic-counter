@@ -2,7 +2,7 @@ package com.trafficcounter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.trafficcounter.domain.Record;
+import com.trafficcounter.domain.TrafficRecord;
 import com.trafficcounter.io.FileRecordsReader;
 import com.trafficcounter.io.IsoRecordParser;
 import com.trafficcounter.io.RecordsReader;
@@ -31,7 +31,7 @@ class FileRecordsReaderTest {
         Path input = tempDir.resolve("traffic.txt");
         Files.writeString(input, FILE_CONTENT);
 
-        List<Record> records = reader.read(input.toString());
+        List<TrafficRecord> records = reader.read(input.toString());
 
         assertEquals(3, records.size());
         assertEquals("2021-12-01T05:00 5", records.get(0).asLine());

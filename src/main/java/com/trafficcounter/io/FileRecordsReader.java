@@ -1,6 +1,6 @@
 package com.trafficcounter.io;
 
-import com.trafficcounter.domain.Record;
+import com.trafficcounter.domain.TrafficRecord;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,7 +14,7 @@ public class FileRecordsReader implements RecordsReader {
     }
 
     @Override
-    public List<Record> read(String path) throws IOException {
+    public List<TrafficRecord> read(String path) throws IOException {
         List<String> lines = Files.readAllLines(Path.of(path));
         return parser.parseLines(lines);
     }

@@ -1,9 +1,9 @@
 package com.trafficcounter.io;
 
-import com.trafficcounter.domain.Record;
+import com.trafficcounter.domain.TrafficRecord;
 import java.io.IOException;
 import java.util.List;
 
 public interface RecordsReader {
-    List<Record> read(String path) throws IOException;
+    List<TrafficRecord> read(String path) throws IOException;
 }

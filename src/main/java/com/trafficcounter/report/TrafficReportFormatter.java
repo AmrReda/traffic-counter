@@ -4,7 +4,7 @@ import com.trafficcounter.analytics.DailyTotalsCalculator;
 import com.trafficcounter.analytics.LeastTrafficPeriodProvider;
 import com.trafficcounter.analytics.TopHalfHoursProvider;
 import com.trafficcounter.analytics.TotalCarsCalculator;
-import com.trafficcounter.domain.Record;
+import com.trafficcounter.domain.TrafficRecord;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class TrafficReportFormatter implements ReportFormatter {
     }
 
     @Override
-    public String format(List<Record> records) {
+    public String format(List<TrafficRecord> records) {
         StringBuilder out = new StringBuilder();
         out.append("Total cars: ").append(totalCarsCalculator.totalCars(records)).append("\n\n");
 
@@ -38,13 +38,13 @@ public class TrafficReportFormatter implements ReportFormatter {
         }
 
         out.append("\nTop 3 half-hours:\n");
-        for (Record record : topHalfHoursProvider.topHalfHours(records, 3)) {
+        for (TrafficRecord record : topHalfHoursProvider.topHalfHours(records, 3)) {
             out.append(record.asLine()).append("\n");
         }
 
-        List<Record> period = leastTrafficPeriodProvider.leastTrafficPeriod(records, 3);
+        List<TrafficRecord> period = leastTrafficPeriodProvider.leastTrafficPeriod(records, 3);
         out.append("\nLeast traffic 1.5-hour period (3 contiguous records):\n");
-        for (Record record : period) {
+        for (TrafficRecord record : period) {
             out.append(record.asLine()).append("\n");
         }
         out.append("Period total: ").append(totalCarsCalculator.totalCars(period));

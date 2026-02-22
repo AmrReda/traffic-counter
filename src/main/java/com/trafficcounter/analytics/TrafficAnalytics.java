@@ -1,6 +1,6 @@
 package com.trafficcounter.analytics;
 
-import com.trafficcounter.domain.Record;
+import com.trafficcounter.domain.TrafficRecord;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -14,18 +14,18 @@ public class TrafficAnalytics implements
     TopHalfHoursProvider,
     LeastTrafficPeriodProvider {
     @Override
-    public int totalCars(List<Record> records) {
+    public int totalCars(List<TrafficRecord> records) {
         int total = 0;
-        for (Record record : records) {
+        for (TrafficRecord record : records) {
             total += record.count();
         }
         return total;
     }
 
     @Override
-    public Map<LocalDate, Integer> dailyTotals(List<Record> records) {
+    public Map<LocalDate, Integer> dailyTotals(List<TrafficRecord> records) {
         Map<LocalDate, Integer> totals = new LinkedHashMap<>();
-        for (Record record : records) {
+        for (TrafficRecord record : records) {
             LocalDate date = record.date();
             totals.put(date, totals.getOrDefault(date, 0) + record.count());
         }
@@ -33,14 +33,14 @@ public class TrafficAnalytics implements
     }
 
     @Override
-    public List<Record> topHalfHours(List<Record> records, int topN) {
-        List<Record> sorted = new ArrayList<>(records);
-        sorted.sort(Comparator.comparingInt(Record::count).reversed().thenComparing(Record::timestamp));
+    public List<TrafficRecord> topHalfHours(List<TrafficRecord> records, int topN) {
+        List<TrafficRecord> sorted = new ArrayList<>(records);
+        sorted.sort(Comparator.comparingInt(TrafficRecord::count).reversed().thenComparing(TrafficRecord::timestamp));
         return sorted.subList(0, Math.min(topN, sorted.size()));
     }
 
     @Override
-    public List<Record> leastTrafficPeriod(List<Record> records, int windowSize) {
+    public List<TrafficRecord> leastTrafficPeriod(List<TrafficRecord> records, int windowSize) {
         if (records.size() < windowSize) {
             throw new IllegalArgumentException("Need at least " + windowSize + " records.");
         }
@@ -59,7 +59,7 @@ public class TrafficAnalytics implements
         return new ArrayList<>(records.subList(bestStart, bestStart + windowSize));
     }
 
-    private int windowSum(List<Record> records, int start, int windowSize) {
+    private int windowSum(List<TrafficRecord> records, int start, int windowSize) {
         int sum = 0;
         for (int i = start; i < start + windowSize; i++) {
             sum += records.get(i).count();

@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.trafficcounter.analytics.TrafficAnalytics;
-import com.trafficcounter.domain.Record;
+import com.trafficcounter.domain.TrafficRecord;
 import com.trafficcounter.io.IsoRecordParser;
 import com.trafficcounter.io.RecordsParser;
 import java.util.List;
@@ -32,7 +32,7 @@ class TrafficAnalyticsTest {
         """;
 
     private static final RecordsParser PARSER = new IsoRecordParser();
-    private static final List<Record> SAMPLE_RECORDS = PARSER.parseLines(SAMPLE_INPUT.lines().toList());
+    private static final List<TrafficRecord> SAMPLE_RECORDS = PARSER.parseLines(SAMPLE_INPUT.lines().toList());
     private static final List<String> EXPECTED_TOP_THREE = List.of(
         "2021-12-01T07:30 46",
         "2021-12-01T08:00 42",
@@ -48,7 +48,7 @@ class TrafficAnalyticsTest {
 
     @Test
     void handlesEmptyInput() {
-        List<Record> records = parseLines("");
+        List<TrafficRecord> records = parseLines("");
         assertEquals(0, analytics.totalCars(records));
         assertEquals("{}", analytics.dailyTotals(records).toString());
         assertEquals(List.of(), analytics.topHalfHours(records, 3));
@@ -57,7 +57,7 @@ class TrafficAnalyticsTest {
 
     @Test
     void handlesSingleDayOnly() {
-        List<Record> records = parseLines(
+        List<TrafficRecord> records = parseLines(
             """
             2021-12-01T05:00:00 5
             2021-12-01T05:30:00 12
@@ -81,12 +81,12 @@ class TrafficAnalyticsTest {
 
     @Test
     void topThreeHalfHours() {
-        assertEquals(EXPECTED_TOP_THREE, analytics.topHalfHours(SAMPLE_RECORDS, 3).stream().map(Record::asLine).toList());
+        assertEquals(EXPECTED_TOP_THREE, analytics.topHalfHours(SAMPLE_RECORDS, 3).stream().map(TrafficRecord::asLine).toList());
     }
 
     @Test
     void topThreeHalfHoursTieBreaksByEarlierTimestamp() {
-        List<Record> records = parseLines(
+        List<TrafficRecord> records = parseLines(
             """
             2021-12-01T01:00:00 10
             2021-12-01T00:00:00 10
@@ -97,7 +97,7 @@ class TrafficAnalyticsTest {
 
         assertEquals(
             List.of("2021-12-01T00:00 10", "2021-12-01T00:30 10", "2021-12-01T01:00 10"),
-            analytics.topHalfHours(records, 3).stream().map(Record::asLine).toList()
+            analytics.topHalfHours(records, 3).stream().map(TrafficRecord::asLine).toList()
         );
     }
 
@@ -105,13 +105,13 @@ class TrafficAnalyticsTest {
     void leastTrafficPeriod() {
         assertEquals(
             EXPECTED_LEAST_PERIOD,
-            analytics.leastTrafficPeriod(SAMPLE_RECORDS, 3).stream().map(Record::asLine).toList()
+            analytics.leastTrafficPeriod(SAMPLE_RECORDS, 3).stream().map(TrafficRecord::asLine).toList()
         );
     }
 
     @Test
     void leastTrafficPeriodChoosesFirstWindowOnTie() {
-        List<Record> records = parseLines(
+        List<TrafficRecord> records = parseLines(
             """
             2021-12-01T00:00:00 1
             2021-12-01T00:30:00 1
@@ -122,13 +122,13 @@ class TrafficAnalyticsTest {
 
         assertEquals(
             List.of("2021-12-01T00:00 1", "2021-12-01T00:30 1", "2021-12-01T01:00 1"),
-            analytics.leastTrafficPeriod(records, 3).stream().map(Record::asLine).toList()
+            analytics.leastTrafficPeriod(records, 3).stream().map(TrafficRecord::asLine).toList()
         );
     }
 
     @Test
     void leastTrafficUsesLineOrderEvenWhenTimestampsAreNonContiguous() {
-        List<Record> records = parseLines(
+        List<TrafficRecord> records = parseLines(
             """
             2021-12-01T00:00:00 50
             2021-12-02T23:30:00 1
@@ -139,7 +139,7 @@ class TrafficAnalyticsTest {
 
         assertEquals(
             List.of("2021-12-02T23:30 1", "2021-12-10T12:00 1", "2022-01-15T09:00 1"),
-            analytics.leastTrafficPeriod(records, 3).stream().map(Record::asLine).toList()
+            analytics.leastTrafficPeriod(records, 3).stream().map(TrafficRecord::asLine).toList()
         );
     }
 
@@ -151,7 +151,7 @@ class TrafficAnalyticsTest {
         );
     }
 
-    private List<Record> parseLines(String input) {
+    private List<TrafficRecord> parseLines(String input) {
         return PARSER.parseLines(input.lines().toList());
     }
 }

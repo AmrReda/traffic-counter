@@ -3,7 +3,7 @@ package com.trafficcounter.domain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public record Record(LocalDateTime timestamp, int count) {
+public record TrafficRecord(LocalDateTime timestamp, int count) {
     public LocalDate date() {
         return timestamp.toLocalDate();
     }

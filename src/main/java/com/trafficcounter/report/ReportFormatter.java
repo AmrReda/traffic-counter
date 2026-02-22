@@ -1,8 +1,8 @@
 package com.trafficcounter.report;
 
-import com.trafficcounter.domain.Record;
+import com.trafficcounter.domain.TrafficRecord;
 import java.util.List;
 
 public interface ReportFormatter {
-    String format(List<Record> records);
+    String format(List<TrafficRecord> records);
 }
