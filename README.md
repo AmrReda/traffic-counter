@@ -28,6 +28,23 @@ Run the app with sample input:
 mvn -q exec:java -Dexec.args="data/sample_input.txt"
 ```
 
+
+## Docker Local Dev (Optional)
+
+Open a shell:
+
+```bash
+docker compose run --rm app
+```
+
+Run commands directly:
+
+```bash
+docker compose run --rm app mvn test
+docker compose run --rm app mvn -q exec:java -Dexec.args="data/sample_input.txt"
+```
+
+
 ## Input Contract
 
 Each non-empty input line must follow:
@@ -63,15 +80,6 @@ The app prints:
 - Top-3 tie-breaker: earlier timestamp wins when counts are equal.
 - Least-period tie-breaker: first minimum window encountered is returned.
 
-## Error Handling
-
-- `FileTrafficRecordsReader`:
-  - rejects null/blank path (`IllegalArgumentException`)
-  - wraps read failures with path context (`IOException`)
-- `IsoTrafficRecordParser`:
-  - rejects null lines list (`NullPointerException`)
-  - rejects malformed rows or invalid values with line-number context (`IllegalArgumentException`)
-
 ## Project Structure
 
 ```text
@@ -86,19 +94,4 @@ src/test/java/com/trafficcounter/
   TrafficAnalyticsTest.java
   FileTrafficRecordsReaderTest.java
   IsoTrafficRecordParserTest.java
-```
-
-## Docker Local Dev (Optional)
-
-Open a shell:
-
-```bash
-docker compose run --rm app
-```
-
-Run commands directly:
-
-```bash
-docker compose run --rm app mvn test
-docker compose run --rm app mvn -q exec:java -Dexec.args="data/sample_input.txt"
 ```
